@@ -40,7 +40,7 @@
         android:layout_gravity="center">
 
         <CheckBox
-            android:id="@+id/remember_password"
+            android:id="@+id/login_remember_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

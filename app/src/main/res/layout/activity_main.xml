@@ -37,6 +37,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:textColor="#fff"
+                    android:textSize="14sp"
                     android:text="会员："/>
 
                 <TextView
@@ -45,7 +46,9 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/main_txv_here1"
+                    android:background="#8000"
                     android:textColor="#fff"
+                    android:textSize="14sp"
                     android:text="您还不是会员"/>
 
             </RelativeLayout>

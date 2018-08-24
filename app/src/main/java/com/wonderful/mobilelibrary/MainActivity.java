@@ -6,17 +6,15 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobUser;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
@@ -27,14 +25,31 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private Button register;
     private Button login;
     private Button fitness;
+    private TextView ismember;
+
+    private BmobUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Bmob.initialize(this,"344a2f524ac27a17eb28899ec0020f04");
+
         viewsInit();
         listenerInit();
+
+
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        user = BmobUser.getCurrentUser();
+        if(user != null){
+            login.setText("上传");
+            ismember.setText(user.getUsername());
+        }
     }
 
     private void viewsInit(){
@@ -43,6 +58,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         register = (Button)findViewById(R.id.main_btn_register);
         login = (Button)findViewById(R.id.main_btn_login);
         fitness = (Button)findViewById(R.id.main_btn_fitness);
+        ismember = (TextView) findViewById(R.id.main_txv_member);
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         headView = navigationView.getHeaderView(0);
@@ -67,8 +83,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 drawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.main_btn_login:
-                intent = new Intent(this,LoginActivity.class);
-                startActivity(intent);
+                if(user == null) {
+                    intent = new Intent(this, LoginActivity.class);
+                    startActivity(intent);
+                }else {
+                    intent = new Intent(this,UploadActivity.class);
+                    startActivity(intent);
+                }
                 break;
             case R.id.main_btn_register:
                 intent = new Intent(this,RegisterActivity.class);
@@ -93,6 +114,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 return true;
             case R.id.menu_upload:
                 intent = new Intent(this,UploadActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.menu_login:
+                drawerLayout.closeDrawers();
+                intent = new Intent(this,LoginActivity.class);
                 startActivity(intent);
                 return true;
         }
