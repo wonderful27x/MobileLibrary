@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/menu_login"
+            android:icon="@drawable/mango_pic"
+            android:title="登录"/>
+        <item
+            android:id="@+id/menu_register"
+            android:icon="@drawable/mango_pic"
+            android:title="注册"/>
+        <item
+            android:id="@+id/menu_switchAccount"
+            android:icon="@drawable/mango_pic"
+            android:title="切换账号"/>
+        <item
+            android:id="@+id/menu_upload"
+            android:icon="@drawable/mango_pic"
+            android:title="上传文件"/>
+        <item
+            android:id="@+id/menu_myUpload"
+            android:icon="@drawable/mango_pic"
+            android:title="我上传的文件"/>
+        <item
+            android:id="@+id/menu_settings"
+            android:icon="@drawable/mango_pic"
+            android:title="设置"/>
+        <item
+            android:id="@+id/menu_backUp"
+            android:icon="@drawable/mango_pic"
+            android:title="返回"/>
+
+    </group>
+
+</menu>
