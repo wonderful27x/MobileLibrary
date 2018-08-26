@@ -106,5 +106,12 @@
         android:textSize="20sp"
         android:text="开始上传"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:text="注意：请将上传文件置于sd卡的uploadThings目录下"/>
+
 
 </LinearLayout>

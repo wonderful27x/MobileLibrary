@@ -1,18 +1,28 @@
 package com.wonderful.mobilelibrary;
 
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.CountListener;
+import cn.bmob.v3.listener.FindListener;
 
 public class MovieListActivity extends BaseActivity {
 
+    private static final String TAG = "MovieListActivity";
+
     private SwipeRefreshLayout swipeRefresh;
-    private List<Start> startList = new ArrayList<>();
-    private StartAdapter adapter;
+    private MovieListAdapter movieAdapter;
+    private int curPage = 0;
+    private int queryLimit = 10;
+    private List<UploadVideo> queryVideoList = new ArrayList<>();
+    private List<UploadVideo> VideoList = new ArrayList<>();
 
     private Start[] starts = {
             new Start("star1",R.drawable.star1),new Start("star2",R.drawable.star2),
@@ -27,50 +37,70 @@ public class MovieListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_list);
 
-        initStart();
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.movie_list_recycler_view);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new StartAdapter(startList);
-        recyclerView.setAdapter(adapter);
+
+        movieAdapter = new MovieListAdapter(queryVideoList);
+        recyclerView.setAdapter(movieAdapter);
+
 
         swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.movie_list_refresh);
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refreshStarts();
+                refreshVideoList();
+            }
+        });
+
+        queryMoreVideos();
+
+    }
+
+   private void refreshVideoList(){
+       queryMoreVideos();
+       swipeRefresh.setRefreshing(false);
+    }
+
+    private void queryMoreVideos(){
+        BmobQuery<UploadVideo> videos = new BmobQuery<>();
+        videos.count(UploadVideo.class, new CountListener() {
+            @Override
+            public void done(Integer integer, BmobException e) {
+                if (e == null){
+                    if(integer>queryVideoList.size()){
+                        queryVideos(curPage);
+                        curPage++;
+                    }else {
+                        showToast("没有更多数据了");
+                    }
+                }else {
+                    MyLog.e(TAG,"查询失败 " + e.getMessage() + e.getErrorCode());
+                }
             }
         });
     }
 
-    private void initStart(){
-        startList.clear();
-        for(int i = 0;i<50;i++){
-            Random random = new Random();
-            int index = random.nextInt(starts.length);
-            startList.add(starts[index]);
-        }
-    }
-
-   private void refreshStarts(){
-        new Thread(new Runnable() {
+    private void queryVideos(final int page){
+        BmobQuery<UploadVideo> videos = new BmobQuery<>();
+        videos.setLimit(queryLimit);
+        videos.setSkip(page*queryLimit);
+        videos.findObjects(new FindListener<UploadVideo>() {
             @Override
-            public void run() {
-                try{
-                    Thread.sleep(2000);
-                }catch (InterruptedException e){
-                    e.printStackTrace();
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        initStart();
-                        adapter.notifyDataSetChanged();
-                        swipeRefresh.setRefreshing(false);
+            public void done(List<UploadVideo> list, BmobException e) {
+                if(e == null){
+                    if(list != null && list.size()>0){
+                        if(page == 0){
+                            queryVideoList.clear();
+                        }
+                        queryVideoList.addAll(list);
+                        movieAdapter.notifyDataSetChanged();
                     }
-                });
+                }else {
+                    MyLog.e(TAG,"查询失败 " + e.getMessage() + e.getErrorCode());
+                }
             }
-        }).start();
+        });
     }
 }
