@@ -1,19 +1,29 @@
 package com.wonderful.mobilelibrary;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
+
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.CountListener;
 import cn.bmob.v3.listener.FindListener;
 
-public class MovieListActivity extends BaseActivity {
+public class MovieListActivity extends BaseActivity implements View.OnClickListener{
 
     private static final String TAG = "MovieListActivity";
 
@@ -22,15 +32,12 @@ public class MovieListActivity extends BaseActivity {
     private int curPage = 0;
     private int queryLimit = 10;
     private List<UploadVideo> queryVideoList = new ArrayList<>();
-    private List<UploadVideo> VideoList = new ArrayList<>();
-
-    private Start[] starts = {
-            new Start("star1",R.drawable.star1),new Start("star2",R.drawable.star2),
-            new Start("star3",R.drawable.star3),new Start("star4",R.drawable.star4),
-            new Start("star5",R.drawable.star5),new Start("star6",R.drawable.star6),
-            new Start("star7",R.drawable.star7),new Start("star8",R.drawable.star8),
-            new Start("star9",R.drawable.star9),new Start("star10",R.drawable.star10)
-    };
+    private Button backUp;
+    private Button search;
+    private EditText searchFor;
+    private boolean isSerach = false;
+    private int videoAmount;
+    private int controlValue = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +45,13 @@ public class MovieListActivity extends BaseActivity {
         setContentView(R.layout.activity_movie_list);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.movie_list_recycler_view);
+        searchFor = (EditText)findViewById(R.id.movie_list_search_for);
+        backUp = (Button)findViewById(R.id.movie_list_backup);
+        search = (Button)findViewById(R.id.movie_list_search);
+
+        backUp.setOnClickListener(this);
+        search.setOnClickListener(this);
+
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(layoutManager);
 
@@ -54,26 +68,77 @@ public class MovieListActivity extends BaseActivity {
             }
         });
 
-        queryMoreVideos();
+        getVideosAmount();
+    }
 
+    @Override
+    public void onClick(View v){
+        switch (v.getId()){
+            case R.id.movie_list_backup:
+                finish();
+                break;
+            case R.id.movie_list_search:
+                if(!TextUtils.isEmpty(searchFor.getText().toString())) {
+                    isSerach = true;
+                    curPage = 0;
+                    queryVideoList.clear();
+                    queryVideos();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void searchForWant(){
+        List<UploadVideo> VideoList = new ArrayList<>();
+        String searchContent = searchFor.getText().toString();
+        String matchName;
+        boolean ok;
+
+        VideoList.clear();
+        searchContent = ".*"+searchContent+".*";
+
+        for (UploadVideo v:queryVideoList){
+            matchName = v.getVideoName();
+            ok = Pattern.matches(searchContent,matchName);
+            if(ok){
+                VideoList.add(v);
+            }
+        }
+        queryVideoList.clear();
+        queryVideoList.addAll(VideoList);
+        movieAdapter.notifyDataSetChanged();
+        curPage = 0;
     }
 
    private void refreshVideoList(){
-       queryMoreVideos();
-       swipeRefresh.setRefreshing(false);
+       queryVideos();
     }
 
-    private void queryMoreVideos(){
+    private void queryVideos(){
         BmobQuery<UploadVideo> videos = new BmobQuery<>();
-        videos.count(UploadVideo.class, new CountListener() {
+        videos.setLimit(queryLimit);
+        videos.setSkip(curPage*queryLimit);
+        videos.findObjects(new FindListener<UploadVideo>() {
             @Override
-            public void done(Integer integer, BmobException e) {
-                if (e == null){
-                    if(integer>queryVideoList.size()){
-                        queryVideos(curPage);
-                        curPage++;
-                    }else {
-                        showToast("没有更多数据了");
+            public void done(List<UploadVideo> list, BmobException e) {
+                if(e == null){
+                    if(list != null && list.size()>0){
+                        if(curPage == 0){
+                            queryVideoList.clear();
+                        }
+                        queryVideoList.addAll(list);
+                        if(videoAmount<=queryVideoList.size()){
+                            Message message = new Message();
+                            message.what = 0;
+                            handler.sendMessage(message);
+                        }else {
+                            curPage++;
+                            Message message = new Message();
+                            message.what = 1;
+                            handler.sendMessage(message);
+                        }
                     }
                 }else {
                     MyLog.e(TAG,"查询失败 " + e.getMessage() + e.getErrorCode());
@@ -82,21 +147,50 @@ public class MovieListActivity extends BaseActivity {
         });
     }
 
-    private void queryVideos(final int page){
-        BmobQuery<UploadVideo> videos = new BmobQuery<>();
-        videos.setLimit(queryLimit);
-        videos.setSkip(page*queryLimit);
-        videos.findObjects(new FindListener<UploadVideo>() {
-            @Override
-            public void done(List<UploadVideo> list, BmobException e) {
-                if(e == null){
-                    if(list != null && list.size()>0){
-                        if(page == 0){
-                            queryVideoList.clear();
-                        }
-                        queryVideoList.addAll(list);
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        public void handleMessage(Message msg){
+            switch (msg.what){
+                case 0:
+                    swipeRefresh.setRefreshing(false);
+                    if(controlValue == 0) {
+                        movieAdapter.notifyDataSetChanged();
+                        controlValue = 1;
+                    }else {
+                        showToast("没有更多数据了");
+                    }
+                    if(isSerach) {
+                        searchForWant();
+                        controlValue = 0;
+                        isSerach = false;
+                    }
+                    break;
+                case 1:
+                    if(isSerach) {
+                        queryVideos();
+                    }else {
+                        swipeRefresh.setRefreshing(false);
                         movieAdapter.notifyDataSetChanged();
                     }
+                    break;
+                case 2:
+                    queryVideos();
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+    private void getVideosAmount(){
+        BmobQuery<UploadVideo> videos = new BmobQuery<>();
+        videos.count(UploadVideo.class, new CountListener() {
+            @Override
+            public void done(Integer integer, BmobException e) {
+                if (e == null){
+                    videoAmount = integer;
+                    Message message = new Message();
+                    message.what = 2;
+                    handler.sendMessage(message);
                 }else {
                     MyLog.e(TAG,"查询失败 " + e.getMessage() + e.getErrorCode());
                 }

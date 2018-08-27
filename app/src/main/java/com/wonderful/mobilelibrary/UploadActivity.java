@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 
 import java.io.File;
@@ -40,7 +41,7 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
     private String uploadUrl;
     private String uploadName;
     private boolean LOAD = false;
-    private ProgressDialog dialog;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
         cook = (RadioButton)findViewById(R.id.upload_cook);
         personal = (RadioButton)findViewById(R.id.upload_personal);
         expose = (RadioButton)findViewById(R.id.upload_public);
+        progressBar = (ProgressBar)findViewById(R.id.upload_progress_bar);
 
         choose.setOnClickListener(this);
         startUpload.setOnClickListener(this);
@@ -62,6 +64,8 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
         cook.setOnClickListener(this);
         personal.setOnClickListener(this);
         expose.setOnClickListener(this);
+
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -93,13 +97,8 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
                         showToast("请选择相关属性");
                         return;
                     }
-                    dialog = new ProgressDialog(UploadActivity.this);
-                    dialog.setTitle("Upload...");
-                    dialog.setIndeterminate(false);
-                    dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                    dialog.setMax(100);
-                    dialog.setCancelable(true);
-                    dialog.show();
+                    progressBar.setProgress(0);
+                    progressBar.setVisibility(View.VISIBLE);
                     File file = new File(uploadUrl);
                     final BmobFile bmobFile = new BmobFile(file);
                     bmobFile.uploadblock(new UploadFileListener() {
@@ -110,6 +109,7 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
                                 message.what = 1;
                                 handler.sendMessage(message);
                                 insertObject(new UploadVideo(uploadName,bmobFile));
+                                //insertObject(new UploadVideo(uploadName,bmobFile.getFileUrl()));
                             }else {
                                 MyLog.e(TAG,"上传失败" + e.getMessage() + e.getErrorCode());
                                 MyLog.e(TAG,"错误地址=" + uploadUrl);
@@ -118,7 +118,7 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
                         @Override
                         public void onProgress(Integer value) {
                             // 返回的上传进度（百分比）
-                            dialog.incrementProgressBy(value);
+                            progressBar.setProgress(value);
                         }
                     });
                 }
@@ -173,12 +173,36 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
         });
     }
 
+    /*private void insertObject(UploadVideo object){
+        BmobACL acl = new BmobACL();    //创建一个ACL对象
+        if(privacy.equals("EXPOSE")){
+            acl.setPublicReadAccess(true);
+        }else if(privacy.equals("PERSONAL")){
+            acl.setReadAccess(BmobUser.getCurrentUser(),true);
+        }
+        acl.setWriteAccess(BmobUser.getCurrentUser(), true);   // 设置当前用户可写的权限
+        object.setCategory(category);
+        object.setPrivacy(privacy);
+        object.setACL(acl);
+        object.save(new SaveListener<String>() {
+            @Override
+            public void done(String s, BmobException e) {
+                if(e==null){
+                    showToast("添加数据成功");
+                }else{
+                    MyLog.e(TAG,"添加数据失败："+e.getMessage()+","+e.getErrorCode());
+                }
+
+            }
+        });
+    }*/
+
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         public void handleMessage(Message msg){
             switch (msg.what){
                 case 1:
-                    dialog.dismiss();
+                    progressBar.setVisibility(View.GONE);
                     break;
                 default:
                     break;

@@ -24,6 +24,7 @@
                 android:text="返回"/>
 
             <EditText
+                android:id="@+id/movie_list_search_for"
                 android:layout_width="0dp"
                 android:layout_height="35dp"
                 android:layout_gravity="center_vertical"
@@ -37,7 +38,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="搜索"/>
+                android:text="搜索" />
 
         </LinearLayout>
 
@@ -52,7 +53,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/movie_list_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

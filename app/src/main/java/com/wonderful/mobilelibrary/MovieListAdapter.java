@@ -55,6 +55,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
                 UploadVideo video = videosList.get(position);
                 Intent intent = new Intent(mContext,MoviePlayActivity.class);
                 intent.putExtra("videoUrl",video.getVideo().getFileUrl());
+                //intent.putExtra("videoUrl",video.getVideoUrl());
                 mContext.startActivity(intent);
             }
         });
@@ -66,17 +67,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
         UploadVideo video = videosList.get(position);
         holder.videoName.setText(video.getVideoName());
         String videoUrl = video.getVideo().getFileUrl();
-        /*if(videoUrl != null){
-            try {
-                retriever.setDataSource(videoUrl,new HashMap());
-                bitmap = retriever.getFrameAtTime();
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } finally {
-                retriever.release();
-            }
-            Glide.with(mContext).load(bitmap).into(holder.videoImage);
-        }*/
+        //String videoUrl = video.getVideoUrl();
+
         if(videoUrl != null){
             retriever.setDataSource(videoUrl,new HashMap());
             bitmap = retriever.getFrameAtTime();
