@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.VideoView;
 
 import java.io.File;
@@ -42,6 +44,8 @@ public class MoviePlayActivity extends BaseActivity implements View.OnClickListe
         pause.setOnClickListener(this);
         replay.setOnClickListener(this);
 
+        videoView.setMediaController(new MediaController(MoviePlayActivity.this));//系统自带的视频控制条
+
         if(ContextCompat.checkSelfPermission(MoviePlayActivity.this, Manifest.
             permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(MoviePlayActivity.this,new String[]{
@@ -51,7 +55,7 @@ public class MoviePlayActivity extends BaseActivity implements View.OnClickListe
         Intent intent = getIntent();
         videoUrl = intent.getStringExtra("videoUrl");
 
-        initVideoPath(videoUrl);
+        initVideoUrl(videoUrl);
 
     }
 
@@ -60,7 +64,7 @@ public class MoviePlayActivity extends BaseActivity implements View.OnClickListe
         switch (requestCode){
             case 1:
                 if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    initVideoPath(videoUrl);
+                    initVideoUrl(videoUrl);
                 }else {
                     showToast("拒绝权限将无法使用程序");
                     finish();
@@ -71,8 +75,8 @@ public class MoviePlayActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    private void initVideoPath(String url){
-        videoView.setVideoPath(url);
+    private void initVideoUrl(String url){
+        videoView.setVideoURI(Uri.parse(url));
     }
 
     @Override

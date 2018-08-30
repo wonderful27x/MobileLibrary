@@ -150,6 +150,7 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void insertObject(UploadVideo object){
+        MobileLibraryUser author = BmobUser.getCurrentUser(MobileLibraryUser.class);
         BmobACL acl = new BmobACL();    //创建一个ACL对象
         if(privacy.equals("EXPOSE")){
             acl.setPublicReadAccess(true);
@@ -159,6 +160,7 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
         acl.setWriteAccess(BmobUser.getCurrentUser(), true);   // 设置当前用户可写的权限
         object.setCategory(category);
         object.setPrivacy(privacy);
+        object.setAuthor(author);
         object.setACL(acl);
         object.save(new SaveListener<String>() {
             @Override

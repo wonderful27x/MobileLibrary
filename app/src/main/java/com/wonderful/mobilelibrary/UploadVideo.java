@@ -9,6 +9,7 @@ public class UploadVideo extends BmobObject {
         private BmobFile Video;
         private String category;
         private String privacy;
+        private MobileLibraryUser author;
 
         public UploadVideo(){
 
@@ -49,6 +50,14 @@ public class UploadVideo extends BmobObject {
 
         public String getPrivacy(){
             return privacy;
+        }
+
+        public void setAuthor(MobileLibraryUser author){
+            this.author = author;
+        }
+
+        public MobileLibraryUser getAuthor(){
+            return author;
         }
 }
 

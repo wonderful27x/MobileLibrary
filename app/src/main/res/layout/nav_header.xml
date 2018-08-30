@@ -13,11 +13,11 @@
         android:layout_centerInParent="true"/>
 
     <TextView
-        android:id="@+id/user_nave"
+        android:id="@+id/head_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
-        android:text="wonderful"/>
+        android:text="非会员"/>
 
 </RelativeLayout>

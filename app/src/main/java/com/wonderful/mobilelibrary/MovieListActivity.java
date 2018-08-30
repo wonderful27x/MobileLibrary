@@ -1,6 +1,7 @@
 package com.wonderful.mobilelibrary;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.os.Handler;
@@ -35,14 +36,18 @@ public class MovieListActivity extends BaseActivity implements View.OnClickListe
     private Button backUp;
     private Button search;
     private EditText searchFor;
-    private boolean isSerach = false;
+    private boolean isSearch = false;
     private int videoAmount;
     private int controlValue = 0;
+    private String searchCategory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_list);
+
+        Intent intent = getIntent();
+        searchCategory = intent.getStringExtra("category");
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.movie_list_recycler_view);
         searchFor = (EditText)findViewById(R.id.movie_list_search_for);
@@ -68,7 +73,7 @@ public class MovieListActivity extends BaseActivity implements View.OnClickListe
             }
         });
 
-        getVideosAmount();
+        getVideosAmount(searchCategory);
     }
 
     @Override
@@ -79,10 +84,10 @@ public class MovieListActivity extends BaseActivity implements View.OnClickListe
                 break;
             case R.id.movie_list_search:
                 if(!TextUtils.isEmpty(searchFor.getText().toString())) {
-                    isSerach = true;
+                    isSearch = true;
                     curPage = 0;
                     queryVideoList.clear();
-                    queryVideos();
+                    queryVideos(searchCategory);
                 }
                 break;
             default:
@@ -113,11 +118,25 @@ public class MovieListActivity extends BaseActivity implements View.OnClickListe
     }
 
    private void refreshVideoList(){
-       queryVideos();
+       queryVideos(searchCategory);
     }
 
-    private void queryVideos(){
+    private void queryVideos(String category){
+        if(videoAmount ==0 ){
+            controlValue = 1;
+            Message message = new Message();
+            message.what = 0;
+            handler.sendMessage(message);
+            return;
+        }
         BmobQuery<UploadVideo> videos = new BmobQuery<>();
+        if (category.equals("FITNESS")){
+            videos.addWhereEqualTo("category", "FITNESS");
+        }else if(category.equals("COOK")){
+            videos.addWhereEqualTo("category", "COOK");
+        }else if(category.equals("SURVIVE")){
+            videos.addWhereEqualTo("category", "SURVIVE");
+        }
         videos.setLimit(queryLimit);
         videos.setSkip(curPage*queryLimit);
         videos.findObjects(new FindListener<UploadVideo>() {
@@ -159,30 +178,37 @@ public class MovieListActivity extends BaseActivity implements View.OnClickListe
                     }else {
                         showToast("没有更多数据了");
                     }
-                    if(isSerach) {
+                    if(isSearch) {
                         searchForWant();
                         controlValue = 0;
-                        isSerach = false;
+                        isSearch = false;
                     }
                     break;
                 case 1:
-                    if(isSerach) {
-                        queryVideos();
+                    if(isSearch) {
+                        queryVideos(searchCategory);
                     }else {
                         swipeRefresh.setRefreshing(false);
                         movieAdapter.notifyDataSetChanged();
                     }
                     break;
                 case 2:
-                    queryVideos();
+                    queryVideos(searchCategory);
                     break;
                 default:
                     break;
             }
         }
     };
-    private void getVideosAmount(){
+    private void getVideosAmount(String category){
         BmobQuery<UploadVideo> videos = new BmobQuery<>();
+        if (category.equals("FITNESS")){
+            videos.addWhereEqualTo("category", "FITNESS");
+        }else if(category.equals("COOK")){
+            videos.addWhereEqualTo("category", "COOK");
+        }else if(category.equals("SURVIVE")){
+            videos.addWhereEqualTo("category", "SURVIVE");
+        }
         videos.count(UploadVideo.class, new CountListener() {
             @Override
             public void done(Integer integer, BmobException e) {

@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:name=".MyApplication"
@@ -35,9 +36,6 @@
             android:name=".SuccessActivity"
             android:launchMode="singleTask" />
         <activity
-            android:name=".ChooseActivity"
-            android:launchMode="singleTask" />
-        <activity
             android:name=".MovieListActivity"
             android:launchMode="singleTask" />
         <activity
@@ -46,7 +44,20 @@
         <activity
             android:name=".UploadActivity"
             android:launchMode="singleTask" />
-        <activity android:name=".WhatToUploadActivity"></activity>
+        <activity android:name=".WhatToUploadActivity" />
+        <activity android:name=".ChangePasswordActivity" />
+        <activity android:name=".FileManager"></activity>
+
+    <provider
+        android:name="android.support.v4.content.FileProvider"
+        android:authorities="com.wonderful.mobilelibrary.fileprovider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+        <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/file_paths"/>
+    </provider>
+
     </application>
 
 </manifest>
