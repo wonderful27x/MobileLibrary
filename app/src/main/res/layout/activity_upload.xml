@@ -45,6 +45,7 @@
             android:text="选择分类："/>
 
         <RadioGroup
+            android:id="@+id/upload_category_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
@@ -92,6 +93,7 @@
             android:text="是否公开："/>
 
         <RadioGroup
+            android:id="@+id/upload_privacy_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

@@ -23,6 +23,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -52,14 +53,16 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
 
     private Button choose;
     private Button startUpload;
+    private RadioGroup categoryGroup;
+    private RadioGroup privacyGroup;
     private RadioButton survive;
     private RadioButton fitness;
     private RadioButton cook;
     private RadioButton amuse;
     private RadioButton personal;
     private RadioButton expose;
-    private static String category = null;
-    private static String privacy = null;
+    private String category = null;
+    private String privacy = null;
     private String uploadUrl;
     private String uploadName;
     private boolean LOAD = false;
@@ -72,6 +75,8 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
 
         choose = (Button)findViewById(R.id.upload_choose);
         startUpload = (Button)findViewById(R.id.upload_upload);
+        categoryGroup = (RadioGroup)findViewById(R.id.upload_category_group);
+        privacyGroup = (RadioGroup)findViewById(R.id.upload_privacy_group);
         survive = (RadioButton)findViewById(R.id.upload_survive);
         fitness = (RadioButton)findViewById(R.id.upload_fitness);
         cook = (RadioButton)findViewById(R.id.upload_cook);
@@ -82,25 +87,43 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
 
         choose.setOnClickListener(this);
         startUpload.setOnClickListener(this);
-        survive.setOnClickListener(this);
-        fitness.setOnClickListener(this);
-        cook.setOnClickListener(this);
-        amuse.setOnClickListener(this);
-        personal.setOnClickListener(this);
-        expose.setOnClickListener(this);
 
         progressBar.setVisibility(View.GONE);
+
+        categoryGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if(survive.getId() == checkedId){
+                    category = "SURVIVE";
+                }
+                if(fitness.getId() == checkedId){
+                    category = "FITNESS";
+                }
+                if(cook.getId() == checkedId){
+                    category = "COOK";
+                }
+                if(amuse.getId() == checkedId){
+                    category = "AMUSE";
+                }
+            }
+        });
+
+        privacyGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if(personal.getId() == checkedId){
+                    privacy = "PERSONAL";
+                }
+                if(expose.getId() == checkedId){
+                    privacy = "EXPOSE";
+                }
+            }
+        });
     }
 
     @Override
     protected void onResume(){
         super.onResume();
-        category = null;
-        privacy = null;
-        survive.setChecked(false);
-        cook.setChecked(false);
-        fitness.setChecked(false);
-        amuse.setChecked(false);
         if(LOAD){
             choose.setBackgroundResource(R.drawable.apple_pic);
         }
@@ -125,24 +148,6 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
             case R.id.upload_choose:
                 intent = new Intent(UploadActivity.this,WhatToUploadActivity.class);
                 startActivityForResult(intent,1);
-                break;
-            case R.id.upload_survive:
-                category = "SURVIVE";
-                break;
-            case R.id.upload_fitness:
-                category = "FITNESS";
-                break;
-            case R.id.upload_cook:
-                category = "COOK";
-                break;
-            case R.id.upload_amuse:
-                category = "AMUSE";
-                break;
-            case R.id.upload_personal:
-                privacy = "PERSONAL";
-                break;
-            case R.id.upload_public:
-                privacy = "EXPOSE";
                 break;
             case R.id.upload_upload:
                 if(LOAD){
@@ -346,7 +351,7 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
         }
     };
 
-    @Override
+    /*@Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             moveTaskToBack(true);
@@ -355,6 +360,6 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
             return true;
         }
         return super.onKeyDown(keyCode, event);
-    }
+    }*/
 
 }

@@ -13,7 +13,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="文件总是："/>
+            android:text="文件总数："/>
 
         <TextView
             android:id="@+id/file_amount"

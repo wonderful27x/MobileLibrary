@@ -288,9 +288,11 @@ public class FileManager extends BaseActivity implements View.OnClickListener{
                     if (isMultiSelect) {
                         if (viewHolder.checkBox.isChecked()) {
                             viewHolder.checkBox.setChecked(false);
+                            isChecked.put(position,false);
                             fileModifyList.remove(fileList.get(position));
                         } else {
                             viewHolder.checkBox.setChecked(true);
+                            isChecked.put(position,true);
                             fileModifyList.add(fileList.get(position));
                         }
                     }else {
