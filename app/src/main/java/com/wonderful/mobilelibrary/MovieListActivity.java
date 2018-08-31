@@ -118,7 +118,7 @@ public class MovieListActivity extends BaseActivity implements View.OnClickListe
     }
 
    private void refreshVideoList(){
-       queryVideos(searchCategory);
+        queryVideos(searchCategory);
     }
 
     private void queryVideos(String category){
@@ -136,6 +136,8 @@ public class MovieListActivity extends BaseActivity implements View.OnClickListe
             videos.addWhereEqualTo("category", "COOK");
         }else if(category.equals("SURVIVE")){
             videos.addWhereEqualTo("category", "SURVIVE");
+        }else if(category.equals("AMUSE")){
+            videos.addWhereEqualTo("category", "AMUSE");
         }
         videos.setLimit(queryLimit);
         videos.setSkip(curPage*queryLimit);
@@ -208,6 +210,8 @@ public class MovieListActivity extends BaseActivity implements View.OnClickListe
             videos.addWhereEqualTo("category", "COOK");
         }else if(category.equals("SURVIVE")){
             videos.addWhereEqualTo("category", "SURVIVE");
+        }else if(category.equals("AMUSE")){
+            videos.addWhereEqualTo("category", "AMUSE");
         }
         videos.count(UploadVideo.class, new CountListener() {
             @Override

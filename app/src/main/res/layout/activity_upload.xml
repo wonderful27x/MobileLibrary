@@ -46,9 +46,7 @@
 
         <RadioGroup
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
             <RadioButton
                 android:id="@+id/upload_survive"
@@ -60,13 +58,23 @@
                 android:id="@+id/upload_fitness"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/upload_survive"
                 android:text="健身"/>
 
             <RadioButton
                 android:id="@+id/upload_cook"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/upload_survive"
                 android:text="烹饪"/>
+
+            <RadioButton
+                android:id="@+id/upload_amuse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/upload_survive"
+                android:layout_toRightOf="@id/upload_cook"
+                android:text="娱乐"/>
 
         </RadioGroup>
 

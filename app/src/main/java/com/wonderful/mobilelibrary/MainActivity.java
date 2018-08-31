@@ -65,7 +65,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private Button fitness;
     private Button cook;
     private Button survive;
-    private Button others;
+    private Button amuse;
     private Button graphicMode;
     private Button videoMode;
     private TextView ismember;
@@ -79,7 +79,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SharedPreferences pref = getSharedPreferences("First",MODE_PRIVATE);
+        SharedPreferences pref = getSharedPreferences("MobileLibrary",MODE_PRIVATE);
         boolean agree = pref.getBoolean("firstStart",false);
         if(!agree){
             agreewith();
@@ -123,7 +123,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         fitness = (Button)findViewById(R.id.main_btn_fitness);
         cook = (Button)findViewById(R.id.main_btn_cook);
         survive = (Button)findViewById(R.id.main_btn_survive);
-        others = (Button)findViewById(R.id.main_btn_others);
+        amuse = (Button)findViewById(R.id.main_btn_amuse);
         graphicMode = (Button)findViewById(R.id.main_graphic_mode);
         videoMode = (Button)findViewById(R.id.main_video_mode);
         ismember = (TextView) findViewById(R.id.main_txv_member);
@@ -142,7 +142,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         fitness.setOnClickListener(this);
         cook.setOnClickListener(this);
         survive.setOnClickListener(this);
-        others.setOnClickListener(this);
+        amuse.setOnClickListener(this);
         graphicMode.setOnClickListener(this);
         videoMode.setOnClickListener(this);
         headImage.setOnClickListener(this);
@@ -185,8 +185,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 intent.putExtra("category","SURVIVE");
                 startActivity(intent);
                 break;
-            case R.id.main_btn_others:
-                showToast("此功能暂未开放");
+            case R.id.main_btn_amuse:
+                intent = new Intent(this,MovieListActivity.class);
+                intent.putExtra("category","AMUSE");
+                startActivity(intent);
                 break;
             case R.id.head_image:
                 uploadHeadImage();
@@ -443,7 +445,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         dialog.setPositiveButton("我同意", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                SharedPreferences.Editor editor = getSharedPreferences("First",MODE_PRIVATE).edit();
+                SharedPreferences.Editor editor = getSharedPreferences("MobileLibrary",MODE_PRIVATE).edit();
                 editor.putBoolean("firstStart",true);
                 editor.apply();
             }

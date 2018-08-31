@@ -150,7 +150,7 @@
                 android:layout_marginLeft="15dp">
 
                 <Button
-                    android:id="@+id/main_btn_others"
+                    android:id="@+id/main_btn_amuse"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_gravity="center_horizontal"
@@ -161,7 +161,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:textColor="#fff"
-                    android:text="其他"/>
+                    android:text="娱乐"/>
 
             </LinearLayout>
 

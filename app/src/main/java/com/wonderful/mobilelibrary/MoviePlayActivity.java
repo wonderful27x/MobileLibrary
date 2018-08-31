@@ -44,18 +44,18 @@ public class MoviePlayActivity extends BaseActivity implements View.OnClickListe
         pause.setOnClickListener(this);
         replay.setOnClickListener(this);
 
+        Intent intent = getIntent();
+        videoUrl = intent.getStringExtra("videoUrl");
+
         videoView.setMediaController(new MediaController(MoviePlayActivity.this));//系统自带的视频控制条
 
         if(ContextCompat.checkSelfPermission(MoviePlayActivity.this, Manifest.
             permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(MoviePlayActivity.this,new String[]{
                     Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+        }else {
+            initVideoUrl(videoUrl);
         }
-
-        Intent intent = getIntent();
-        videoUrl = intent.getStringExtra("videoUrl");
-
-        initVideoUrl(videoUrl);
 
     }
 
