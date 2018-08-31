@@ -14,15 +14,18 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+
+import cn.bmob.v3.datatype.BmobFile;
 
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.ViewHolder>{
 
     private List<UploadVideo> videosList ;
     private Context mContext;
-    private MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-    private Bitmap bitmap;
+    //private MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+    //private Bitmap bitmap;
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         CardView cardView;
@@ -65,12 +68,12 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
     public void onBindViewHolder(ViewHolder holder, int position){
         UploadVideo video = videosList.get(position);
         holder.videoName.setText(video.getVideoName());
-        String videoUrl = video.getVideo().getFileUrl();
 
-        if(videoUrl != null){
-            retriever.setDataSource(videoUrl,new HashMap());
-            bitmap = retriever.getFrameAtTime();
-            Glide.with(mContext).load(bitmap).into(holder.videoImage);
+        if(video.getVideo() != null){
+            String videoImageUrl = video.getVideoImage().getFileUrl();
+            //retriever.setDataSource(videoUrl,new HashMap());
+            //bitmap = retriever.getFrameAtTime();
+            Glide.with(mContext).load(videoImageUrl).into(holder.videoImage);
         }
     }
 

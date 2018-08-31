@@ -44,9 +44,15 @@
         <activity
             android:name=".UploadActivity"
             android:launchMode="singleTask" />
-        <activity android:name=".WhatToUploadActivity" />
-        <activity android:name=".ChangePasswordActivity" />
-        <activity android:name=".FileManager"></activity>
+        <activity
+            android:name=".WhatToUploadActivity"
+            android:launchMode="singleTask"/>
+        <activity
+            android:name=".ChangePasswordActivity"
+            android:launchMode="singleTask"/>
+        <activity
+            android:name=".FileManager"
+            android:launchMode="singleTask"/>
 
     <provider
         android:name="android.support.v4.content.FileProvider"

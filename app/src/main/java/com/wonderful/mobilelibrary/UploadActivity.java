@@ -7,6 +7,9 @@ import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -14,13 +17,22 @@ import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
 
 import cn.bmob.v3.BmobACL;
 import cn.bmob.v3.BmobObject;
@@ -28,6 +40,7 @@ import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UploadBatchListener;
 import cn.bmob.v3.listener.UploadFileListener;
 
 import static cn.bmob.v3.b.From.e;
@@ -84,6 +97,10 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
         super.onResume();
         category = null;
         privacy = null;
+        survive.setChecked(false);
+        cook.setChecked(false);
+        fitness.setChecked(false);
+        amuse.setChecked(false);
         if(LOAD){
             choose.setBackgroundResource(R.drawable.apple_pic);
         }
@@ -133,7 +150,8 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
                         showToast("请选择相关属性");
                         return;
                     }
-                    progressBar.setProgress(0);
+                    uploadBatch();
+                    /*progressBar.setProgress(0);
                     progressBar.setVisibility(View.VISIBLE);
 
                     SharedPreferences.Editor editor = getSharedPreferences("MobileLibrary",MODE_PRIVATE).edit();
@@ -167,10 +185,85 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
                             editor.putInt("progress",value);
                             editor.apply();
                         }
-                    });
+                    });*/
                 }
         }
     }
+
+    private void uploadBatch(){
+        progressBar.setProgress(0);
+        progressBar.setVisibility(View.VISIBLE);
+
+        SharedPreferences.Editor editor = getSharedPreferences("MobileLibrary",MODE_PRIVATE).edit();
+        editor.putBoolean("uploadFinish",false);
+        editor.apply();
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, //禁止交互
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        Bitmap bitmap;
+        retriever.setDataSource(uploadUrl);
+        bitmap = retriever.getFrameAtTime();
+        File imageFile = getFile(bitmap);
+        final String[] filePaths = new String[2];
+        filePaths[0] = imageFile.getPath();
+        filePaths[1] = uploadUrl;
+
+        BmobFile.uploadBatch(filePaths, new UploadBatchListener() {
+            @Override
+            public void onSuccess(List<BmobFile> files, List<String> urls) {
+                if(urls.size()==filePaths.length){
+                    SharedPreferences.Editor editor = getSharedPreferences("MobileLibrary",MODE_PRIVATE).edit();
+                    editor.putBoolean("uploadFinish",true);
+                    editor.apply();
+                    progressBar.setVisibility(View.GONE);
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    insertObject(files);
+                }
+            }
+
+            @Override
+            public void onError(int statuscode, String errormsg) {
+                MyLog.e(TAG,"上传失败：" + statuscode + errormsg);
+            }
+
+            @Override
+            public void onProgress(int curIndex, int curPercent, int total,int totalPercent) {
+                //1、curIndex--表示当前第几个文件正在上传
+                //2、curPercent--表示当前上传文件的进度值（百分比）
+                //3、total--表示总的上传文件数
+                //4、totalPercent--表示总的上传进度（百分比）
+                progressBar.setProgress(curPercent);
+                SharedPreferences.Editor editor = getSharedPreferences("MobileLibrary",MODE_PRIVATE).edit();
+                editor.putInt("progress",curPercent);
+                editor.apply();
+            }
+        });
+    }
+
+    private File getFile(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        File file = new File(Environment.getExternalStorageDirectory() + "/videoImage.jpg");
+        try {
+            if(file.exists()){
+                file.delete();
+            }
+            file.createNewFile();
+            FileOutputStream fos = new FileOutputStream(file);
+            InputStream is = new ByteArrayInputStream(baos.toByteArray());
+            int x = 0;
+            byte[] b = new byte[1024 * 100];
+            while ((x = is.read(b)) != -1) {
+                fos.write(b, 0, x);
+            }
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return file;
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode,int resultCode,Intent data){
@@ -187,7 +280,36 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
         }
     }
 
-    private void insertObject(UploadVideo object){
+    private void insertObject(List<BmobFile> files){
+        UploadVideo videos = new UploadVideo();
+        MobileLibraryUser author = BmobUser.getCurrentUser(MobileLibraryUser.class);
+        BmobACL acl = new BmobACL();
+        if(privacy.equals("EXPOSE")){
+            acl.setPublicReadAccess(true);
+        }else if(privacy.equals("PERSONAL")){
+            acl.setReadAccess(BmobUser.getCurrentUser(),true);
+        }
+        acl.setWriteAccess(BmobUser.getCurrentUser(), true);   // 设置当前用户可写的权限
+        videos.setVideoImage(files.get(0));
+        videos.setVideo(files.get(1));
+        videos.setVideoName(uploadName);
+        videos.setCategory(category);
+        videos.setPrivacy(privacy);
+        videos.setAuthor(author);
+        videos.setACL(acl);
+        videos.save(new SaveListener<String>() {
+            @Override
+            public void done(String s, BmobException e) {
+                if(e==null){
+                    showToast("添加数据成功");
+                }else{
+                    MyLog.e(TAG,"添加数据失败："+e.getMessage()+","+e.getErrorCode());
+                }
+            }
+        });
+    }
+
+    /*private void insertObject(UploadVideo object){
         MobileLibraryUser author = BmobUser.getCurrentUser(MobileLibraryUser.class);
         BmobACL acl = new BmobACL();
         if(privacy.equals("EXPOSE")){
@@ -210,7 +332,7 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
                 }
             }
         });
-    }
+    }*/
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
@@ -223,5 +345,16 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
             }
         }
     };
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            moveTaskToBack(true);
+            Intent intent = new Intent(this,MainActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
 }
