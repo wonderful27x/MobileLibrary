@@ -6,10 +6,10 @@
 
     <VideoView
         android:id="@+id/movie_play_view"
-        android:layout_width="300dp"
-        android:layout_height="200dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="80dp"/>
+        android:layout_marginTop="70dp"/>
 
     <LinearLayout
         android:layout_width="wrap_content"

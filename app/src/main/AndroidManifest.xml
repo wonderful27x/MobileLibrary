@@ -19,7 +19,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,31 +29,40 @@
         </activity>
         <activity
             android:name=".RegisterActivity"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".LoginActivity"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".SuccessActivity"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MovieListActivity"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MoviePlayActivity"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize"/>
         <activity
             android:name=".UploadActivity"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".WhatToUploadActivity"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ChangePasswordActivity"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".FileManager"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
 
     <provider
         android:name="android.support.v4.content.FileProvider"

@@ -1,8 +1,10 @@
 package com.wonderful.mobilelibrary;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
@@ -14,6 +16,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
@@ -57,6 +60,21 @@ public class MoviePlayActivity extends BaseActivity implements View.OnClickListe
             initVideoUrl(videoUrl);
         }
 
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.FILL_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        if(newConfig.orientation==Configuration.ORIENTATION_LANDSCAPE) {
+            params.setMargins(0,0,0,0);
+            videoView.setLayoutParams(params);
+        } else {
+            params.setMargins(0,200,0,0);
+            videoView.setLayoutParams(params);
+        }
     }
 
     @Override
@@ -107,5 +125,4 @@ public class MoviePlayActivity extends BaseActivity implements View.OnClickListe
             videoView.suspend();
         }
     }
-
 }
