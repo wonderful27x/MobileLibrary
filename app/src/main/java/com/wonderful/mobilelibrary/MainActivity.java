@@ -100,10 +100,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             login.setText("上传");
             ismember.setText(user.getUsername());
             userName.setText(user.getUsername());
-            SharedPreferences pref = getSharedPreferences("First",MODE_PRIVATE);
-            boolean firstLogin = pref.getBoolean("firstLogin",false);
             if(user.getHeadImage() == null){
-                Glide.with(MainActivity.this).load(R.drawable.qianyecha).into(headImage);
+                Glide.with(MainActivity.this).load(R.drawable.default_avatar).into(headImage);
             }else {
                 Glide.with(MainActivity.this).load(user.getHeadImage().getFileUrl()).into(headImage);
             }
@@ -111,7 +109,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             login.setText("登录");
             ismember.setText("您还不是会员");
             userName.setText("非会员");
-            Glide.with(MainActivity.this).load(R.drawable.qianyecha).into(headImage);
+            Glide.with(MainActivity.this).load(R.drawable.default_avatar).into(headImage);
         }
     }
 
@@ -372,7 +370,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Intent intent;
         switch (item.getItemId()){
-            case R.id.menu_backUp:
+            case R.id.menu_backup:
                 drawerLayout.closeDrawers();
                 return true;
             case R.id.menu_upload:

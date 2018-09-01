@@ -13,6 +13,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class WhatToUploadActivity extends BaseActivity implements ListView.OnItemClickListener {
 
@@ -33,6 +34,7 @@ public class WhatToUploadActivity extends BaseActivity implements ListView.OnIte
         namePrefix = file.getPath()+"/";
         nameLocation = file.getPath().length()+1;
         ListFiles(file);
+        playable(uploadList);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 WhatToUploadActivity.this,android.R.layout.simple_list_item_1,uploadList);
@@ -52,6 +54,21 @@ public class WhatToUploadActivity extends BaseActivity implements ListView.OnIte
                 ListFiles(file);
             }
         }
+    }
+
+    private void playable(List<String> uploadList){
+        List<String> uploadListChange = new ArrayList<>();
+        uploadListChange.clear();
+        String matchName = ".*\\.(mp4|flv|mkv|rmvb|3gp|avi)$";
+        boolean ok;
+        for (String s:uploadList){
+            ok = Pattern.matches(matchName,s);
+            if(ok){
+                uploadListChange.add(s);
+            }
+        }
+        uploadList.clear();
+        uploadList.addAll(uploadListChange);
     }
 
     @Override

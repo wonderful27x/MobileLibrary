@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -40,6 +41,8 @@ public class MovieListActivity extends BaseActivity implements View.OnClickListe
     private int videoAmount;
     private int controlValue = 0;
     private String searchCategory;
+    private FloatingActionButton fab;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,13 +52,15 @@ public class MovieListActivity extends BaseActivity implements View.OnClickListe
         Intent intent = getIntent();
         searchCategory = intent.getStringExtra("category");
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.movie_list_recycler_view);
+        recyclerView = (RecyclerView) findViewById(R.id.movie_list_recycler_view);
         searchFor = (EditText)findViewById(R.id.movie_list_search_for);
         backUp = (Button)findViewById(R.id.movie_list_backup);
         search = (Button)findViewById(R.id.movie_list_search);
+        fab = (FloatingActionButton)findViewById(R.id.movie_list_fab);
 
         backUp.setOnClickListener(this);
         search.setOnClickListener(this);
+        fab.setOnClickListener(this);
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(layoutManager);
@@ -89,6 +94,9 @@ public class MovieListActivity extends BaseActivity implements View.OnClickListe
                     queryVideoList.clear();
                     queryVideos(searchCategory);
                 }
+                break;
+            case R.id.movie_list_fab:
+                recyclerView.smoothScrollToPosition(queryVideoList.size());
                 break;
             default:
                 break;

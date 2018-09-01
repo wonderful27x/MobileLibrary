@@ -10,12 +10,12 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/car">
+        android:background="#3D3D3D">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#8000">
+            android:theme="@android:style/Theme.Translucent"  >
 
             <Button
                 android:id="@+id/main_btn_drawer"
@@ -24,7 +24,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
-                android:background="@drawable/mango_pic"/>
+                android:background="@drawable/drawer"/>
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -46,7 +46,6 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/main_txv_here1"
-                    android:background="#8000"
                     android:textColor="#fff"
                     android:textSize="14sp"
                     android:text="您还不是会员"/>
@@ -81,7 +80,7 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_gravity="center_horizontal"
-                    android:background="@drawable/testuse" />
+                    android:background="@drawable/survive" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -105,7 +104,7 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_gravity="center_horizontal"
-                    android:background="@drawable/testuse" />
+                    android:background="@drawable/fitness" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -129,7 +128,7 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_gravity="center_horizontal"
-                    android:background="@drawable/testuse" />
+                    android:background="@drawable/cook" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -154,7 +153,7 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_gravity="center_horizontal"
-                    android:background="@drawable/testuse" />
+                    android:background="@drawable/amuse" />
 
                 <TextView
                     android:layout_width="wrap_content"

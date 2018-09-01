@@ -4,35 +4,35 @@
 
         <item
             android:id="@+id/menu_switchAccount"
-            android:icon="@drawable/mango_pic"
+            android:icon="@drawable/switch_account"
             android:title="切换账号"/>
         <item
             android:id="@+id/menu_register"
-            android:icon="@drawable/mango_pic"
+            android:icon="@drawable/register"
             android:title="注册"/>
         <item
             android:id="@+id/menu_upload"
-            android:icon="@drawable/mango_pic"
+            android:icon="@drawable/upload"
             android:title="上传文件"/>
         <item
             android:id="@+id/menu_file_manager"
-            android:icon="@drawable/mango_pic"
+            android:icon="@drawable/file_manager"
             android:title="上传管理"/>
         <item
             android:id="@+id/menu_change_password"
-            android:icon="@drawable/mango_pic"
+            android:icon="@drawable/change_pass"
             android:title="修改密码"/>
         <item
             android:id="@+id/menu_logout"
-            android:icon="@drawable/mango_pic"
+            android:icon="@drawable/logout"
             android:title="退出登录"/>
         <item
-            android:id="@+id/menu_backUp"
-            android:icon="@drawable/mango_pic"
+            android:id="@+id/menu_backup"
+            android:icon="@drawable/back"
             android:title="返回"/>
         <item
             android:id="@+id/menu_about_software"
-            android:icon="@drawable/mango_pic"
+            android:icon="@drawable/about"
             android:title="关于软件"/>
 
     </group>
