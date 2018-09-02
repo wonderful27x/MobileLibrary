@@ -2,8 +2,6 @@ package com.wonderful.mobilelibrary;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.media.MediaMetadataRetriever;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
@@ -15,11 +13,9 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.CountListener;
@@ -88,6 +84,10 @@ public class MovieListActivity extends BaseActivity implements View.OnClickListe
                 finish();
                 break;
             case R.id.movie_list_search:
+                if(!NetworkUtil.networkCheck(this)){
+                    showToast("网络无连接");
+                    return;
+                }
                 if(!TextUtils.isEmpty(searchFor.getText().toString())) {
                     isSearch = true;
                     curPage = 0;
@@ -126,6 +126,10 @@ public class MovieListActivity extends BaseActivity implements View.OnClickListe
     }
 
    private void refreshVideoList(){
+       if(!NetworkUtil.networkCheck(this)){
+           showToast("网络无连接");
+           return;
+       }
         queryVideos(searchCategory);
     }
 

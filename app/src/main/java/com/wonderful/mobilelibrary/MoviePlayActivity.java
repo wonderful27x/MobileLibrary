@@ -1,29 +1,18 @@
 package com.wonderful.mobilelibrary;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
-import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.VideoView;
-
-import java.io.File;
-import java.util.HashMap;
-
-import cn.bmob.v3.b.I;
 
 public class MoviePlayActivity extends BaseActivity implements View.OnClickListener {
 

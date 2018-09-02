@@ -1,51 +1,32 @@
 package com.wonderful.mobilelibrary;
 
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.app.ProgressDialog;
-import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
-import android.os.SystemClock;
-import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
-
 import cn.bmob.v3.BmobACL;
-import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadBatchListener;
-import cn.bmob.v3.listener.UploadFileListener;
-
-import static cn.bmob.v3.b.From.e;
-import static java.lang.Thread.*;
 
 public class UploadActivity extends BaseActivity implements View.OnClickListener {
 
@@ -156,41 +137,6 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
                         return;
                     }
                     uploadBatch();
-                    /*progressBar.setProgress(0);
-                    progressBar.setVisibility(View.VISIBLE);
-
-                    SharedPreferences.Editor editor = getSharedPreferences("MobileLibrary",MODE_PRIVATE).edit();
-                    editor.putBoolean("uploadFinish",false);
-                    editor.apply();
-                    getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, //禁止交互
-                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
-                    File file = new File(uploadUrl);
-                    final BmobFile bmobFile = new BmobFile(file);
-                    bmobFile.uploadblock(new UploadFileListener() {
-                        @Override
-                        public void done(BmobException e) {
-                            if(e == null){
-                                SharedPreferences.Editor editor = getSharedPreferences("MobileLibrary",MODE_PRIVATE).edit();
-                                editor.putBoolean("uploadFinish",true);
-                                editor.apply();
-                                insertObject(new UploadVideo(uploadName,bmobFile));
-                                progressBar.setVisibility(View.GONE);
-                                progressBar.setProgress(0);
-                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                            }else {
-                                MyLog.e(TAG,"上传失败" + e.getMessage() + e.getErrorCode());
-                                MyLog.e(TAG,"错误地址=" + uploadUrl);
-                            }
-                        }
-                        @Override
-                        public void onProgress(Integer value) {
-                            progressBar.setProgress(value);
-                            SharedPreferences.Editor editor = getSharedPreferences("MobileLibrary",MODE_PRIVATE).edit();
-                            editor.putInt("progress",value);
-                            editor.apply();
-                        }
-                    });*/
                 }
         }
     }
@@ -313,53 +259,5 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
             }
         });
     }
-
-    /*private void insertObject(UploadVideo object){
-        MobileLibraryUser author = BmobUser.getCurrentUser(MobileLibraryUser.class);
-        BmobACL acl = new BmobACL();
-        if(privacy.equals("EXPOSE")){
-            acl.setPublicReadAccess(true);
-        }else if(privacy.equals("PERSONAL")){
-            acl.setReadAccess(BmobUser.getCurrentUser(),true);
-        }
-        acl.setWriteAccess(BmobUser.getCurrentUser(), true);   // 设置当前用户可写的权限
-        object.setCategory(category);
-        object.setPrivacy(privacy);
-        object.setAuthor(author);
-        object.setACL(acl);
-        object.save(new SaveListener<String>() {
-            @Override
-            public void done(String s, BmobException e) {
-                if(e==null){
-                    showToast("添加数据成功");
-                }else{
-                    MyLog.e(TAG,"添加数据失败："+e.getMessage()+","+e.getErrorCode());
-                }
-            }
-        });
-    }*/
-
-    @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
-        public void handleMessage(Message msg){
-            switch (msg.what){
-                case 1:
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-
-    /*@Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            moveTaskToBack(true);
-            Intent intent = new Intent(this,MainActivity.class);
-            startActivity(intent);
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }*/
 
 }

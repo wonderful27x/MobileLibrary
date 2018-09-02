@@ -2,8 +2,6 @@ package com.wonderful.mobilelibrary;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.media.MediaMetadataRetriever;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,21 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
-
-import java.io.File;
-import java.util.HashMap;
 import java.util.List;
-
-import cn.bmob.v3.datatype.BmobFile;
 
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.ViewHolder>{
 
     private List<UploadVideo> videosList ;
     private Context mContext;
-    //private MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-    //private Bitmap bitmap;
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         CardView cardView;
@@ -71,8 +61,6 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
 
         if(video.getVideo() != null){
             String videoImageUrl = video.getVideoImage().getFileUrl();
-            //retriever.setDataSource(videoUrl,new HashMap());
-            //bitmap = retriever.getFrameAtTime();
             Glide.with(mContext).load(videoImageUrl).into(holder.videoImage);
         }
     }
