@@ -106,7 +106,7 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
     protected void onResume(){
         super.onResume();
         if(LOAD){
-            choose.setBackgroundResource(R.drawable.apple_pic);
+            choose.setText("ok");
         }
         SharedPreferences pref = getSharedPreferences("MobileLibrary",MODE_PRIVATE);
         boolean uploadFinish = pref.getBoolean("uploadFinish",true);
