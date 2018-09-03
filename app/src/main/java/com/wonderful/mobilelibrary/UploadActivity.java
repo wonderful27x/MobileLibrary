@@ -4,23 +4,36 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import cn.bmob.v3.BmobACL;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
@@ -32,7 +45,7 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
 
     private static final String TAG = "UploadActivity";
 
-    private Button choose;
+    private ImageButton choose;
     private Button startUpload;
     private RadioGroup categoryGroup;
     private RadioGroup privacyGroup;
@@ -48,13 +61,14 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
     private String uploadName;
     private boolean LOAD = false;
     private ProgressBar progressBar;
+    private Timer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
 
-        choose = (Button)findViewById(R.id.upload_choose);
+        choose = (ImageButton)findViewById(R.id.upload_choose);
         startUpload = (Button)findViewById(R.id.upload_upload);
         categoryGroup = (RadioGroup)findViewById(R.id.upload_category_group);
         privacyGroup = (RadioGroup)findViewById(R.id.upload_privacy_group);
@@ -106,21 +120,59 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
     protected void onResume(){
         super.onResume();
         if(LOAD){
-            choose.setText("ok");
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            Bitmap bitmap;
+            retriever.setDataSource(uploadUrl);
+            bitmap = retriever.getFrameAtTime();
+            choose.setImageBitmap(bitmap);
         }
-        SharedPreferences pref = getSharedPreferences("MobileLibrary",MODE_PRIVATE);
-        boolean uploadFinish = pref.getBoolean("uploadFinish",true);
-        int progress = pref.getInt("progress",0);
-        if(uploadFinish){
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            progressBar.setVisibility(View.GONE);
-        }else {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, //禁止交互
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            progressBar.setVisibility(View.VISIBLE);
-            progressBar.setProgress(progress);
+        try {
+            timer = new Timer(true);
+            TimerTask timerTask = new MyTask();
+            timer.schedule(timerTask, 1000, 1000);
+        }catch (RuntimeException e){
+            e.printStackTrace();
+            MyLog.e(TAG,e.getMessage());
         }
     }
+
+    class MyTask extends TimerTask{
+        public void run(){
+            Message message = new Message();
+            message.what = 0;
+            handler.sendMessage(message);
+        }
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        timer.cancel();
+    }
+
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        public void handleMessage(Message msg){
+            switch (msg.what){
+                case 0:
+                    SharedPreferences pref = getSharedPreferences("MobileLibrary",MODE_PRIVATE);
+                    boolean uploadFinish = pref.getBoolean("uploadFinish",true);
+                    int progress = pref.getInt("progress",0);
+                    if(uploadFinish){
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        progressBar.setVisibility(View.GONE);
+                    }else {
+                        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, //禁止交互
+                                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        progressBar.setVisibility(View.VISIBLE);
+                        progressBar.setProgress(progress);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
     @Override
     public void onClick(View v){
@@ -167,8 +219,6 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
                     SharedPreferences.Editor editor = getSharedPreferences("MobileLibrary",MODE_PRIVATE).edit();
                     editor.putBoolean("uploadFinish",true);
                     editor.apply();
-                    progressBar.setVisibility(View.GONE);
-                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                     insertObject(files);
                 }
             }
@@ -184,7 +234,6 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
                 //2、curPercent--表示当前上传文件的进度值（百分比）
                 //3、total--表示总的上传文件数
                 //4、totalPercent--表示总的上传进度（百分比）
-                progressBar.setProgress(curPercent);
                 SharedPreferences.Editor editor = getSharedPreferences("MobileLibrary",MODE_PRIVATE).edit();
                 editor.putInt("progress",curPercent);
                 editor.apply();

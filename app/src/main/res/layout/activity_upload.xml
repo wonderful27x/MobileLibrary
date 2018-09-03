@@ -21,15 +21,17 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:textSize="20sp"
             android:text="选择文件："/>
 
-        <Button
+        <ImageButton
             android:id="@+id/upload_choose"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="点我"/>
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/add_things"
+            android:layout_marginLeft="10dp" />
 
     </LinearLayout>
 
